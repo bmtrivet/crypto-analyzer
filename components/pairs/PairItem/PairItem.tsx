@@ -6,7 +6,9 @@ import { PairItemProps } from "./types";
 export const PairItem = ({ pair }: PairItemProps) => {
     return (
         <div>
-            <Image width={50} height={50} src={pair.imageUrl} alt={pair.mainCoinName} />
+            <div className='w-8 h-8 relative rounded-full overflow-hidden'>
+                <Image fill src={pair.imageUrl} alt={pair.mainCoinName} />
+            </div>
             <div>
                 <span>
                     {pair.mainCoinName}/{pair.relativeCoinName}
