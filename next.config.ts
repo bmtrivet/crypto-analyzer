@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
             displayName: true,
         },
     },
+    images: {
+        domains: ["coin-images.coingecko.com"],
+    },
 };
 
 export default nextConfig;
