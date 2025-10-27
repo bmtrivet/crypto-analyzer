@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import StyledComponentsRegistry from "@/lib/registry";
-import GlobalStyles from "@/styles/globalStyles";
 import { Header } from "@/components/layout/Header";
 
 export const metadata: Metadata = {
@@ -18,10 +16,8 @@ export default function RootLayout({
         <html lang='en'>
             <body>
                 <Header />
-                <StyledComponentsRegistry>
-                    <GlobalStyles />
-                    {children}
-                </StyledComponentsRegistry>
+
+                {children}
             </body>
         </html>
     );
