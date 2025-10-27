@@ -1,15 +1,12 @@
 "use client";
 
-import React from "react";
-import { PairItemProps } from "./types";
 import Image from "next/image";
+import { PairItemProps } from "./types";
 
 export const PairItem = ({ pair }: PairItemProps) => {
     return (
         <div>
-            {pair.imageUrl ? (
-                <Image width={50} height={50} src={pair.imageUrl} alt={pair.mainCoinName} />
-            ) : null}
+            <Image width={50} height={50} src={pair.imageUrl} alt={pair.mainCoinName} />
             <div>
                 <span>
                     {pair.mainCoinName}/{pair.relativeCoinName}

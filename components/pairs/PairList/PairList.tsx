@@ -1,6 +1,6 @@
 "use client";
 
-import { PairItem } from "./PairItem";
+import { PairItem } from "../PairItem";
 import { PairListProps } from "./types";
 
 export const PairList = (props: PairListProps) => {

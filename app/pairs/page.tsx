@@ -1,5 +1,5 @@
 import { GET as getPairs } from "@/app/api/pairs/route";
-import { PairList } from "./PairList";
+import { PairList } from "@/components/pairs/PairList";
 
 const PairsPage = async () => {
     const res = await getPairs();
