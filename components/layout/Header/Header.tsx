@@ -1,22 +1,31 @@
-"use client";
-
 import Link from "next/link";
 
 export const Header = () => {
+    const links = [
+        {
+            name: "Pairs",
+            url: "/pairs",
+        },
+        {
+            name: "About",
+            url: "/about",
+        },
+    ];
+
     return (
-        <header className='bg-gray-800 text-white p-4 flex flex-col md:flex-row md:items-center md:justify-between'>
-            <div className='text-xl font-bold mb-2 md:mb-0'>
+        <header className='bg-gray-950 py-5 px-20 gap-10 flex items-center w-full'>
+            <div className='text-white uppercase text-[28px]'>
                 <Link href='/'>Crypto App</Link>
             </div>
 
-            <nav>
-                <Link href='/pairs' className='hover:text-yellow-400'>
-                    Pairs
-                </Link>
-
-                <Link href='/about' className='hover:text-yellow-400'>
-                    About
-                </Link>
+            <nav className='flex items-center gap-4'>
+                {links.map(link => {
+                    return (
+                        <Link className='text-white' key={link.name} href={link.url}>
+                            {link.name}
+                        </Link>
+                    );
+                })}
             </nav>
         </header>
     );
