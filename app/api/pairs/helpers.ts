@@ -25,6 +25,8 @@ export const getPairsWithCoinsName = (pairs: Array<OkxTicker>) => {
 };
 
 export const getImageMap = (cgData: CoinGeckoCoin[]) => {
+    if (!cgData?.length) return new Map();
+
     return cgData.reduce((map, coin) => {
         const key = coin.symbol.toLowerCase();
         if (!map.has(key)) {
