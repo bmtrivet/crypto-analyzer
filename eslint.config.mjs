@@ -24,6 +24,14 @@ const eslintConfig = defineConfig([
 
             "no-unused-expressions": "error",
             "no-unused-labels": "error",
+
+            "@typescript-eslint/consistent-type-imports": [
+                "error",
+                {
+                    prefer: "type-imports",
+                    fixStyle: "inline-type-imports",
+                },
+            ],
         },
     },
     globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),

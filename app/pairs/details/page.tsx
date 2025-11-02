@@ -14,7 +14,9 @@ import {
     Filler,
 } from "chart.js";
 import { useSearchParams } from "next/navigation";
-import { MAX_DIGITS, MAX_TICKS, PAIR_PARAM_NAME, UPDATE_INTERVAL } from "./constants";
+import { MAX_DIGITS, PAIR_PARAM_NAME, UPDATE_INTERVAL } from "./constants";
+import { getChartData, getChartOptions } from "./helpers";
+import { type HistoricalKline, type PriceData } from "./types";
 
 ChartJS.register(
     CategoryScale,
@@ -26,16 +28,6 @@ ChartJS.register(
     Legend,
     Filler,
 );
-
-interface PriceData {
-    timestamp: number;
-    price: number;
-}
-
-interface HistoricalKline {
-    0: number; // Open time
-    4: string; // Close price
-}
 
 export default function Details() {
     const [priceData, setPriceData] = useState<PriceData[]>([]);
@@ -174,101 +166,14 @@ export default function Details() {
         };
     }, [pairRequestParam, initializeWebSocketConnection]);
 
-    const chartData = useMemo(() => {
-        const labels = priceData.map((_, index) => {
-            if (index === 0 || index === priceData.length - 1 || index % 20 === 0) {
-                return new Date(priceData[index]?.timestamp).toLocaleTimeString();
-            }
-            return "";
-        });
-
-        return {
-            labels,
-            datasets: [
-                {
-                    label: pairName ?? "",
-                    data: priceData.map(data => data.price),
-                    borderColor: priceChange >= 0 ? "#02C076" : "#F84960",
-                    backgroundColor:
-                        priceChange >= 0 ? "rgba(2, 192, 118, 0.1)" : "rgba(248, 73, 96, 0.1)",
-                    borderWidth: 2,
-                    fill: true,
-                    pointRadius: 1,
-                    pointHoverRadius: 4,
-                    pointBackgroundColor: priceChange >= 0 ? "#02C076" : "#F84960",
-                },
-            ],
-        };
-    }, [priceData, pairName, priceChange]);
-    const chartOptions = useMemo(
-        () => ({
-            responsive: true,
-            maintainAspectRatio: false,
-            // Отключаем ВСЕ анимации
-            animation: false as const,
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                tooltip: {
-                    mode: "index" as const,
-                    intersect: false,
-                    backgroundColor: "#1E2329",
-                    titleColor: "#EAECEF",
-                    bodyColor: "#EAECEF",
-                    borderColor: "#2B3139",
-                    borderWidth: 1,
-                },
-            },
-            scales: {
-                x: {
-                    display: true,
-                    grid: {
-                        color: "rgba(43, 49, 57, 0.5)",
-                    },
-                    ticks: {
-                        color: "#808A9D",
-                        maxTicksLimit: MAX_TICKS,
-                    },
-                },
-                y: {
-                    display: true,
-                    grid: {
-                        color: "rgba(43, 49, 57, 0.5)",
-                    },
-                    // Убираем suggestedMin/suggestedMax - используем автопределы
-                    ticks: {
-                        color: "#808A9D",
-                        callback: function (value: string | number) {
-                            if (typeof value === "number") {
-                                return (
-                                    "$" +
-                                    value.toLocaleString(undefined, {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 8,
-                                    })
-                                );
-                            }
-                            return value;
-                        },
-                    },
-                },
-            },
-            interaction: {
-                mode: "nearest" as const,
-                axis: "x" as const,
-                intersect: false,
-            },
-            // Отключаем все переходы
-            transitions: {
-                active: {
-                    animation: {
-                        duration: 0,
-                    },
-                },
-            },
-        }),
-        [], // Пустые зависимости - опции не меняются
+    const chartData = useMemo(
+        () =>
+            getChartData({
+                pairName,
+                priceChange,
+                priceData,
+            }),
+        [priceData, pairName, priceChange],
     );
 
     if (!pair) {
@@ -329,7 +234,7 @@ export default function Details() {
                         </div>
                     </div>
                 ) : priceData.length > 0 ? (
-                    <Line data={chartData} options={chartOptions} redraw={false} />
+                    <Line data={chartData} options={getChartOptions()} redraw={false} />
                 ) : (
                     <div className='h-full flex items-center justify-center'>
                         <p className='text-secondary'>No data available</p>
