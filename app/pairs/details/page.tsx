@@ -174,23 +174,6 @@ export default function Details() {
         };
     }, [pairRequestParam, initializeWebSocketConnection]);
 
-    // Calculate chart bounds
-    const chartBounds = useMemo(() => {
-        if (priceData.length === 0) return { min: 0, max: 100 };
-
-        const prices = priceData.map(d => d.price);
-        const maxPrice = Math.max(...prices);
-        const minPrice = Math.min(...prices);
-
-        // Add 20% padding to top and bottom
-        const padding = (maxPrice - minPrice) * 0.2;
-
-        return {
-            min: Math.max(0, minPrice - padding), // Don't go below 0
-            max: maxPrice + padding,
-        };
-    }, [priceData]);
-
     const chartData = useMemo(() => {
         const labels = priceData.map((_, index) => {
             if (index === 0 || index === priceData.length - 1 || index % 20 === 0) {
@@ -217,11 +200,12 @@ export default function Details() {
             ],
         };
     }, [priceData, pairName, priceChange]);
-
     const chartOptions = useMemo(
         () => ({
             responsive: true,
             maintainAspectRatio: false,
+            // Отключаем ВСЕ анимации
+            animation: false as const,
             plugins: {
                 legend: {
                     display: false,
@@ -252,8 +236,7 @@ export default function Details() {
                     grid: {
                         color: "rgba(43, 49, 57, 0.5)",
                     },
-                    suggestedMin: chartBounds.min,
-                    suggestedMax: chartBounds.max,
+                    // Убираем suggestedMin/suggestedMax - используем автопределы
                     ticks: {
                         color: "#808A9D",
                         callback: function (value: string | number) {
@@ -276,8 +259,16 @@ export default function Details() {
                 axis: "x" as const,
                 intersect: false,
             },
+            // Отключаем все переходы
+            transitions: {
+                active: {
+                    animation: {
+                        duration: 0,
+                    },
+                },
+            },
         }),
-        [chartBounds],
+        [], // Пустые зависимости - опции не меняются
     );
 
     if (!pair) {
